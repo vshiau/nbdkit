@@ -4,7 +4,7 @@
 #
 # https://gitlab.com/libvirt/libvirt-ci
 
-FROM docker.io/library/ubuntu:20.04
+FROM ubuntu:20.04 as builder
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
@@ -82,3 +82,14 @@ ENV LANG "en_US.UTF-8"
 ENV MAKE "/usr/bin/make"
 ENV PYTHON "/usr/bin/python3"
 ENV CCACHE_WRAPPERSDIR "/usr/libexec/ccache-wrappers"
+
+ADD . /nbdkit
+WORKDIR /nbdkit
+
+RUN autoreconf -i && \
+    ./configure && \
+    make && \
+    make check
+
+FROM ubuntu:20.04
+COPY --from=builder /nbdkit/* /
