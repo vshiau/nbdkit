@@ -1,0 +1,5 @@
+project: nbdkit
+target: nbdkit
+
+cmds:
+  - cmd: /nbdkit
